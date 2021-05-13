@@ -1,0 +1,41 @@
+//Considerata una variabile globale, conto1=50, e due variabili dichiarate nel main, accredito=20 e addebito=30, creare due thread indipendenti:
+//-Thread1 deve fare riferimento ad una funzione, Funz1,  passare il parametro accredito e sommarlo alla variabile globale. Stampare il risultato.
+//-Thread2 deve fare riferimento ad una funzione Funz2, passare il parametro addebito e sottrarlo alla variabile globale conto. Stampare il risultato.  Infine, dopo aver individuato la sezione critica, 
+//risolvere il problema attraverso l’utilizzo dei mutex.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <unistd.h>
+
+int conto1=50;
+
+void *thread_1(void *arg)
+{
+  int dato, *punta_dato;
+  punta_dato=(int*) arg;
+  dato= *punta_dato;
+  conto1=dato+conto1;
+  printf("th1 la somma e' %d\n",conto1);
+}
+
+void *thread_2(void *arg)
+{
+  int dato, *punta_dato;
+  punta_dato=(int*) arg;
+  dato= *punta_dato;
+  conto1=dato+conto1;
+  printf("th2 la somma e' %d\n",conto1);
+}
+
+int main()
+{
+	int accredito=20;
+	int addebito=30;
+    	pthread_t thread_id1, thread_id2;
+	pthread_create(&thread_id1, NULL, thread_1, (void*)&accredito);
+	pthread_create(&thread_id2, NULL, thread_2, (void*)&addebito);
+   	pthread_join(thread_id1, NULL);
+	pthread_join(thread_id2, NULL);
+return 0;
+}
