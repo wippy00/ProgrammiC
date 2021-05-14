@@ -10,13 +10,17 @@
 
 int conto1=50;
 
+pthread_mutex_t mutex=PTHREAD_MUTEX_INITIALIZER;
+
 void *thread_1(void *arg)
 {
   int dato, *punta_dato;
   punta_dato=(int*) arg;
   dato= *punta_dato;
+  pthread_mutex_lock(&mutex);
   conto1=dato+conto1;
-  printf("th1 la somma e' %d\n",conto1);
+  printf("th1 accredito e' %d\n",conto1);
+  pthread_mutex_unlock(&mutex);
 }
 
 void *thread_2(void *arg)
@@ -24,8 +28,10 @@ void *thread_2(void *arg)
   int dato, *punta_dato;
   punta_dato=(int*) arg;
   dato= *punta_dato;
-  conto1=dato+conto1;
-  printf("th2 la somma e' %d\n",conto1);
+  pthread_mutex_lock(&mutex);
+  conto1=conto1-dato;
+  printf("th2 addebito e' %d\n",conto1);
+  pthread_mutex_unlock(&mutex);
 }
 
 int main()
@@ -37,5 +43,6 @@ int main()
 	pthread_create(&thread_id2, NULL, thread_2, (void*)&addebito);
    	pthread_join(thread_id1, NULL);
 	pthread_join(thread_id2, NULL);
+	printf("main e' %d\n",conto1);
 return 0;
 }
